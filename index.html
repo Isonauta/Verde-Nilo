@@ -10,8 +10,8 @@
     --verde: #7bc4a0;
     --verde-oscuro: #4a9175;
     --verde-profundo: #2d6b54;
-    --rosa: #e8607a;
-    --rosa-suave: #f5c5ce;
+    --rosa: #d4177a;
+    --rosa-suave: #f9b8e0;
     --blanco: #fefefe;
     --crema: #fdf8f3;
     --crema-oscura: #f5ede2;
@@ -211,18 +211,18 @@
   .step p { font-size: 0.81rem; color: var(--texto-suave); line-height: 1.7; font-weight: 300; }
 
   /* MERCADO */
-  .mercado { background: var(--texto); color: white; padding: 80px 48px; }
+  .mercado { background: var(--crema); color: var(--texto); padding: 80px 48px; border-top: 2px solid rgba(123,196,160,0.2); }
   .mercado-inner { max-width: 1080px; margin: 0 auto; text-align: center; }
-  .mercado h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 3vw, 2.5rem); margin-bottom: 12px; }
+  .mercado h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 3vw, 2.5rem); margin-bottom: 12px; color: var(--texto); }
   .mercado h2 em { font-style: italic; color: var(--verde); }
-  .mercado-sub { font-size: 0.93rem; color: rgba(255,255,255,0.55); font-weight: 300; max-width: 520px; margin: 0 auto 52px; line-height: 1.7; }
+  .mercado-sub { font-size: 0.93rem; color: var(--texto-suave); font-weight: 300; max-width: 520px; margin: 0 auto 52px; line-height: 1.7; }
   .mercado-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; }
-  .m-stat { padding: 28px 20px; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; transition: all 0.3s; position: relative; overflow: hidden; }
+  .m-stat { padding: 28px 20px; border: 1.5px solid rgba(123,196,160,0.25); background: white; border-radius: 18px; transition: all 0.3s; position: relative; overflow: hidden; }
   .m-stat::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--verde), var(--rosa)); transform: scaleX(0); transition: transform 0.3s; }
   .m-stat:hover::before { transform: scaleX(1); }
-  .m-stat:hover { background: rgba(255,255,255,0.04); }
+  .m-stat:hover { background: var(--gris-suave); box-shadow: 0 8px 24px rgba(123,196,160,0.15); }
   .m-stat-num { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 700; color: var(--verde); margin-bottom: 6px; line-height: 1; }
-  .m-stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.5); font-weight: 300; line-height: 1.6; }
+  .m-stat-label { font-size: 0.75rem; color: var(--texto-suave); font-weight: 300; line-height: 1.6; }
 
   /* CTA FINAL */
   .cta-final { padding: 96px 48px; text-align: center; position: relative; overflow: hidden; background: var(--crema); }
@@ -237,13 +237,13 @@
   .delivery-note { margin-top: 24px; display: inline-flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--texto-suave); background: white; padding: 7px 18px; border-radius: 50px; border: 1px solid rgba(0,0,0,0.08); }
 
   /* FOOTER */
-  footer { background: var(--texto); color: white; padding: 56px 48px; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: start; }
+  footer { background: var(--verde-profundo); color: white; padding: 56px 48px; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: start; }
   .footer-brand p { font-size: 0.82rem; color: rgba(255,255,255,0.45); font-weight: 300; line-height: 1.7; margin-top: 14px; max-width: 300px; }
   .footer-links { display: flex; gap: 44px; }
   .footer-col h4 { font-size: 0.68rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--verde); margin-bottom: 12px; }
   .footer-col a { display: block; font-size: 0.81rem; color: rgba(255,255,255,0.45); text-decoration: none; margin-bottom: 7px; transition: color 0.2s; }
   .footer-col a:hover { color: white; }
-  .footer-bottom { background: rgba(0,0,0,0.3); text-align: center; padding: 14px; font-size: 0.68rem; color: rgba(255,255,255,0.28); }
+  .footer-bottom { background: rgba(0,0,0,0.2); text-align: center; padding: 14px; font-size: 0.68rem; color: rgba(255,255,255,0.4); }
 
   /* WA FLOAT */
   .wa-float { position: fixed; bottom: 24px; right: 24px; background: #25D366; color: white; padding: 13px 20px; border-radius: 50px; font-weight: 500; font-size: 0.83rem; text-decoration: none; display: flex; align-items: center; gap: 7px; box-shadow: 0 4px 20px rgba(37,211,102,0.5); z-index: 300; transition: all 0.25s; animation: float 4s ease-in-out 2s infinite; }
