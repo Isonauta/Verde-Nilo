@@ -11,8 +11,8 @@ administrar sola, con pagos por Mercado Pago.
 - [x] **Fase 1 — Base de datos** (`supabase/migrations/`): catálogo de productos con fotos,
   precio, stock/estado y etiquetas de menú (`temporada`, `ofertas`, `nuevos_ingresos`),
   más el bucket de almacenamiento para las fotos.
-- [ ] **Fase 2 — Panel admin**: login de Isabel + formulario para crear/editar/borrar
-  productos, subir fotos y marcar "vendido".
+- [x] **Fase 2 — Panel admin** (`admin/`): login de Isabel + formulario para crear,
+  editar y borrar productos, subir/quitar fotos, tildar menús y marcar "vendido".
 - [ ] **Fase 3 — Tienda dinámica**: la página pública deja de tener productos fijos y los
   lee desde la base de datos, con filtros por menú.
 - [ ] **Fase 4 — Mercado Pago**: botón de compra por producto, función serverless que
@@ -38,5 +38,31 @@ administrar sola, con pagos por Mercado Pago.
    usar en la Fase 2/3 para conectar el panel admin y la tienda pública a esta base de
    datos.
 
-Con esto, la base de datos queda lista: solo falta construir el panel admin (Fase 2) y
-conectar la tienda pública (Fase 3) para que Isabel empiece a cargar productos.
+Con esto, la base de datos queda lista para conectar el panel admin.
+
+## Fase 2 — Panel admin (`admin/`)
+
+Es una página aparte (`admin/index.html`), sin login público: solo entra quien tenga
+usuario y contraseña creados a mano en Supabase (paso 4 de arriba). Desde ahí Isabel
+puede crear productos, subir varias fotos a la vez, ponerles precio, tildar en qué menú
+aparecen (Temporada / Ofertas / Nuevos ingresos), marcarlos como vendidos y eliminarlos.
+
+Para conectarlo a tu proyecto:
+
+1. Abrir `assets/supabase-config.js` y reemplazar `url` y `anonKey` por los de tu
+   proyecto (Project Settings → API).
+2. Servir el sitio con un servidor local (no funciona bien abriendo el archivo
+   directo con doble clic, porque el navegador bloquea el login bajo el protocolo
+   `file://`). Por ejemplo, desde la carpeta del proyecto:
+   ```
+   npx serve .
+   ```
+   y abrir `http://localhost:3000/admin/` en el navegador.
+3. Iniciar sesión con el correo y contraseña que le creaste a Isabel en Supabase.
+
+Para producción, este mismo sitio (`index.html`, `admin/`, `assets/`) se puede
+publicar tal cual en Netlify o Vercel arrastrando la carpeta o conectando este
+repositorio de GitHub — no requiere build ni configuración especial.
+
+**Pendiente para Fase 3:** hoy la tienda pública (`index.html`) todavía no lee los
+productos cargados en el panel — eso es lo próximo.
