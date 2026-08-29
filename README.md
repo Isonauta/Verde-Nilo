@@ -1,6 +1,7 @@
 # Verde Nilo
 
-Sitio de Verde Nilo (Talcahuano, Chile) — bolsos TouBag hechos con telas reutilizadas.
+Sitio de Verde Nilo (Talcahuano, Chile) — productos hechos con telas reutilizadas (bolsos,
+delantales, individuales, banderines y más).
 
 ## Roadmap: de landing a tienda con admin
 
