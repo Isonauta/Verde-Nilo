@@ -13,8 +13,10 @@ administrar sola, con pagos por Mercado Pago.
   más el bucket de almacenamiento para las fotos.
 - [x] **Fase 2 — Panel admin** (`admin/`): login de Isabel + formulario para crear,
   editar y borrar productos, subir/quitar fotos, tildar menús y marcar "vendido".
-- [ ] **Fase 3 — Tienda dinámica**: la página pública deja de tener productos fijos y los
-  lee desde la base de datos, con filtros por menú.
+- [x] **Fase 3 — Tienda dinámica** (`assets/store.js`): la página pública (`index.html`)
+  ya no tiene productos fijos: lee el catálogo desde Supabase (solo productos
+  `disponible`, por RLS), con filtros por menú (Temporada / Ofertas / Nuevos ingresos)
+  y botón "Reservar" que arma el mensaje de WhatsApp con el nombre y precio del producto.
 - [ ] **Fase 4 — Mercado Pago**: botón de compra por producto, función serverless que
   genera la preferencia de pago y webhook que avisa a Isabel cuando se confirma un pago
   (ella marca el producto como vendido manualmente en el panel).
@@ -64,5 +66,20 @@ Para producción, este mismo sitio (`index.html`, `admin/`, `assets/`) se puede
 publicar tal cual en Netlify o Vercel arrastrando la carpeta o conectando este
 repositorio de GitHub — no requiere build ni configuración especial.
 
-**Pendiente para Fase 3:** hoy la tienda pública (`index.html`) todavía no lee los
-productos cargados en el panel — eso es lo próximo.
+## Fase 3 — Tienda dinámica (`assets/store.js`)
+
+La sección `#productos` de `index.html` ahora carga el catálogo directamente desde
+Supabase (misma conexión que el panel, vía `assets/supabase-config.js`):
+
+- Solo se muestran productos con estado `disponible` — lo filtra la política de RLS
+  `public_read_available_products`, no hay que hacer nada extra en el frontend.
+- Los botones de filtro (Todos / Temporada / Ofertas / Nuevos ingresos) filtran en el
+  navegador por el arreglo `tags` de cada producto.
+- El botón "Reservar" de cada tarjeta abre WhatsApp con el nombre y precio del
+  producto ya escritos en el mensaje.
+
+No requiere configuración adicional: en cuanto un producto se marca `disponible` en el
+panel admin, aparece en la tienda pública (recargando la página).
+
+**Pendiente para Fase 4:** el botón "Reservar" sigue derivando a WhatsApp — falta el
+botón de pago con Mercado Pago.

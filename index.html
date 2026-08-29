@@ -199,6 +199,11 @@
   .btn-reservar { background: var(--verde); color: white; border: none; padding: 9px 16px; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; white-space: nowrap; }
   .btn-reservar:hover { background: var(--verde-oscuro); transform: translateY(-1px); }
   .ver-mas-wrap { text-align: center; margin-top: 44px; }
+  .prod-filtros { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 40px; }
+  .filtro-btn { background: white; border: 1.5px solid rgba(123,196,160,0.3); color: var(--texto-suave); font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.78rem; padding: 8px 20px; border-radius: 50px; cursor: pointer; transition: all 0.2s; }
+  .filtro-btn:hover { border-color: var(--verde); color: var(--verde-oscuro); }
+  .filtro-btn.active { background: var(--verde); border-color: var(--verde); color: white; }
+  .prod-estado { grid-column: 1 / -1; text-align: center; color: var(--texto-suave); font-size: 0.9rem; font-weight: 300; padding: 24px; }
 
   /* PROCESO */
   .proceso { background: var(--crema); padding: 96px 48px; }
@@ -361,6 +366,7 @@
   </a>
   <ul class="nav-links">
     <li><a href="#historia">Nuestra historia</a></li>
+    <li><a href="#productos">Catálogo</a></li>
     <li><a href="#proceso">Cómo comprar</a></li>
   </ul>
   <a href="https://wa.me/56984790825?text=Hola%20Verde%20Nilo%2C%20quiero%20ver%20los%20TouBags%20disponibles!" class="nav-cta" target="_blank">
@@ -461,6 +467,24 @@
   </div>
 </section>
 
+<!-- PRODUCTOS -->
+<section class="productos" id="productos">
+  <div class="section-header animate-up">
+    <span class="eyebrow-pill">Catálogo</span>
+    <h2>Encuentra tu <em>TouBag único.</em></h2>
+    <p>Cada bolso existe una sola vez. Filtra por categoría y reserva el que más te enamore por WhatsApp.</p>
+  </div>
+  <div class="prod-filtros" id="prod-filtros">
+    <button type="button" class="filtro-btn active" data-tag="todos">Todos</button>
+    <button type="button" class="filtro-btn" data-tag="temporada">Temporada</button>
+    <button type="button" class="filtro-btn" data-tag="ofertas">Ofertas</button>
+    <button type="button" class="filtro-btn" data-tag="nuevos_ingresos">Nuevos ingresos</button>
+  </div>
+  <div class="productos-grid" id="productos-grid">
+    <div class="prod-estado">Cargando catálogo…</div>
+  </div>
+</section>
+
 <!-- PROCESO -->
 <section class="proceso" id="proceso">
   <div class="section-header animate-up">
@@ -546,5 +570,9 @@ document.querySelectorAll('.animate-up').forEach((el, i) => {
   observer.observe(el);
 });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/supabase-config.js"></script>
+<script src="assets/store.js"></script>
 </body>
 </html>
