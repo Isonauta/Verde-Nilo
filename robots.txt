@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://www.verdenilo.cl/sitemap.xml
+Sitemap: https://verdenilo.cl/sitemap.xml
