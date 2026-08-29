@@ -19,7 +19,7 @@
   }
 
   function reservarUrl(product) {
-    const texto = `Hola Verde Nilo, quiero reservar el TouBag "${product.name}" (${formatPrice(product.price)})`;
+    const texto = `Hola Verde Nilo, quiero reservar el producto "${product.name}" (${formatPrice(product.price)})`;
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
   }
 
@@ -29,7 +29,7 @@
       : products.filter((p) => (p.tags || []).includes(activeTag));
 
     if (visibles.length === 0) {
-      grid.innerHTML = '<div class="prod-estado">Todavía no hay TouBags en esta categoría. Vuelve pronto 🌿</div>';
+      grid.innerHTML = '<div class="prod-estado">Todavía no hay productos en esta categoría. Vuelve pronto 🌿</div>';
       return;
     }
 
