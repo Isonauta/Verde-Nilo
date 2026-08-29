@@ -50,6 +50,14 @@ Es una página aparte (`admin/index.html`), sin login público: solo entra quien
 usuario y contraseña creados a mano en Supabase (paso 4 de arriba). Desde ahí Isabel
 puede crear productos, subir varias fotos a la vez, ponerles precio, tildar en qué menú
 aparecen (Temporada / Ofertas / Nuevos ingresos), marcarlos como vendidos y eliminarlos.
+Es responsiva, pensada para usarse también desde el celular.
+
+**Cómo entra Isabel:** no hay ningún link visible desde la tienda pública (a propósito).
+La URL es `/admin/` (ej. `https://verdenilo.cl/admin/`) y además hay un punto "·"
+discreto al principio del pie de página del sitio (`© 2025 Verde Nilo...`) que lleva
+directo ahí — para quien no sepa que está, es indistinguible de un separador de texto.
+La página además tiene `noindex` y está bloqueada en `robots.txt`, así que no aparece en
+buscadores.
 
 Para conectarlo a tu proyecto:
 
