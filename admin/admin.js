@@ -34,6 +34,8 @@
   const imageGrid = document.getElementById('image-grid');
   const productList = document.getElementById('product-list');
   const productCount = document.getElementById('product-count');
+  const orderList = document.getElementById('order-list');
+  const orderCount = document.getElementById('order-count');
 
   let editingId = null;
   let currentImages = []; // URLs públicas ya subidas a Storage
@@ -73,6 +75,7 @@
     loginScreen.style.display = 'none';
     dashboard.style.display = 'block';
     loadProducts();
+    loadOrders();
   }
 
   loginForm.addEventListener('submit', async (e) => {
@@ -326,6 +329,59 @@
     }
     if (editingId === product.id) resetForm();
     loadProducts();
+  }
+
+  // ---------- PEDIDOS (Mercado Pago) ----------
+
+  async function loadOrders() {
+    const { data, error } = await client
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) {
+      orderList.innerHTML = `<div class="error-msg visible">No se pudieron cargar los pedidos: ${error.message}</div>`;
+      return;
+    }
+
+    renderOrderList(data || []);
+  }
+
+  function renderOrderList(orders) {
+    const nuevos = orders.filter((o) => o.status === 'aprobado').length;
+    orderCount.textContent = nuevos > 0 ? `${nuevos} nuevo(s)` : `${orders.length} pedido(s)`;
+
+    if (orders.length === 0) {
+      orderList.innerHTML = '<div class="empty-state">Todavía no hay pedidos por Mercado Pago.</div>';
+      return;
+    }
+
+    orderList.innerHTML = '';
+    orders.forEach((order) => {
+      const card = document.createElement('div');
+      card.className = 'order-card';
+
+      const fecha = new Date(order.created_at).toLocaleString('es-CL', {
+        day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit',
+      });
+      const comprador = [order.buyer_name, order.buyer_email].filter(Boolean).join(' · ');
+
+      card.innerHTML = `
+        <div class="order-card-top">
+          <h3>${order.product_name}</h3>
+          <div class="order-price">${formatPrice(order.amount)}</div>
+        </div>
+        <div class="badge-row">
+          <span class="badge badge-order-${order.status}">${order.status}</span>
+        </div>
+        <div class="order-meta" style="margin-top:6px">
+          ${comprador ? `${comprador}<br>` : ''}${fecha}
+        </div>
+      `;
+
+      orderList.appendChild(card);
+    });
   }
 
   checkSession();

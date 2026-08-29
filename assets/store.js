@@ -1,6 +1,9 @@
 // Fase 3: catálogo dinámico de la tienda pública.
 // Lee los productos disponibles desde Supabase (mismo proyecto que el panel admin)
 // y los renderiza en #productos-grid, con filtro por menú (tags).
+//
+// Fase 4: botón "Comprar" que crea una preferencia de Mercado Pago
+// (api/create-preference.js) y redirige al checkout.
 
 (() => {
   const { createClient } = window.supabase;
@@ -52,7 +55,10 @@
             ${desc}
             <div class="prod-footer">
               <div class="prod-price">${formatPrice(product.price)}</div>
-              <a class="btn-reservar" href="${reservarUrl(product)}" target="_blank">💬 Reservar</a>
+              <div class="prod-actions">
+                <a class="btn-reservar" href="${reservarUrl(product)}" target="_blank">💬 Reservar</a>
+                <button type="button" class="btn-mp" data-id="${product.id}">Comprar</button>
+              </div>
             </div>
           </div>
         </div>
@@ -68,6 +74,53 @@
     activeTag = btn.dataset.tag;
     renderGrid();
   });
+
+  grid.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.btn-mp');
+    if (!btn) return;
+
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Redirigiendo…';
+
+    try {
+      const res = await fetch('/api/create-preference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: btn.dataset.id }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.init_point) throw new Error(data.error || 'Error desconocido');
+      window.location.href = data.init_point;
+    } catch (err) {
+      alert(`No se pudo iniciar el pago: ${err.message}`);
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  });
+
+  function showPagoBanner() {
+    const params = new URLSearchParams(location.search);
+    const pago = params.get('pago');
+
+    const mensajes = {
+      exito: { texto: '✅ ¡Pago recibido! Isabel confirmará tu pedido a la brevedad.', color: 'var(--verde)' },
+      pendiente: { texto: '⏳ Tu pago quedó pendiente de confirmación.', color: 'var(--verde-oscuro)' },
+      error: { texto: '❌ El pago no se pudo completar. Puedes intentar de nuevo o reservar por WhatsApp.', color: 'var(--rosa)' },
+    };
+    const info = mensajes[pago];
+    if (!info) return;
+
+    const banner = document.createElement('div');
+    banner.textContent = info.texto;
+    banner.style.cssText = `position:sticky;top:0;z-index:1000;background:${info.color};color:white;text-align:center;padding:14px 20px;font-family:'DM Sans',sans-serif;font-size:0.9rem;`;
+    document.body.prepend(banner);
+
+    // Limpiamos el parámetro de la URL para no repetir el aviso al recargar o compartir el link.
+    params.delete('pago');
+    const nuevaUrl = location.pathname + (params.toString() ? `?${params}` : '') + location.hash;
+    history.replaceState({}, '', nuevaUrl);
+  }
 
   async function loadProducts() {
     const { data, error } = await client
@@ -86,4 +139,5 @@
   }
 
   loadProducts();
+  showPagoBanner();
 })();

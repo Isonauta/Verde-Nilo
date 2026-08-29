@@ -84,14 +84,28 @@
       </form>
     </div>
 
-    <!-- PRODUCT LIST -->
-    <div class="panel">
-      <div class="product-list-header">
-        <h2 style="margin:0">Productos</h2>
-        <span id="product-count" class="product-count"></span>
+    <!-- RIGHT COLUMN: pedidos + productos -->
+    <div class="admin-col-right">
+      <!-- PEDIDOS (Mercado Pago) -->
+      <div class="panel">
+        <div class="product-list-header">
+          <h2 style="margin:0">Pedidos</h2>
+          <span id="order-count" class="product-count"></span>
+        </div>
+        <div id="order-list">
+          <div class="loading">Cargando pedidos…</div>
+        </div>
       </div>
-      <div id="product-list">
-        <div class="loading">Cargando productos…</div>
+
+      <!-- PRODUCT LIST -->
+      <div class="panel">
+        <div class="product-list-header">
+          <h2 style="margin:0">Productos</h2>
+          <span id="product-count" class="product-count"></span>
+        </div>
+        <div id="product-list">
+          <div class="loading">Cargando productos…</div>
+        </div>
       </div>
     </div>
   </main>

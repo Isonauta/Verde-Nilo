@@ -18,9 +18,10 @@ administrar sola, con pagos por Mercado Pago.
   ya no tiene productos fijos: lee el catálogo desde Supabase (solo productos
   `disponible`, por RLS), con filtros por menú (Temporada / Ofertas / Nuevos ingresos)
   y botón "Reservar" que arma el mensaje de WhatsApp con el nombre y precio del producto.
-- [ ] **Fase 4 — Mercado Pago**: botón de compra por producto, función serverless que
-  genera la preferencia de pago y webhook que avisa a Isabel cuando se confirma un pago
-  (ella marca el producto como vendido manualmente en el panel).
+- [x] **Fase 4 — Mercado Pago** (`api/`): botón "Comprar" por producto que crea una
+  preferencia de pago (Checkout Pro) y redirige a Mercado Pago; un webhook confirma el
+  pago y lo deja visible en la nueva sección "Pedidos" del panel (ella marca el producto
+  como vendido manualmente, como ya hacía antes).
 - [ ] **Fase 5 — Pulido**: reemplazar las fotos base64 incrustadas en `index.html` por
   imágenes servidas desde Supabase Storage, responsive y pruebas.
 
@@ -63,9 +64,11 @@ Para conectarlo a tu proyecto:
    y abrir `http://localhost:3000/admin/` en el navegador.
 3. Iniciar sesión con el correo y contraseña que le creaste a Isabel en Supabase.
 
-Para producción, este mismo sitio (`index.html`, `admin/`, `assets/`) se puede
-publicar tal cual en Netlify o Vercel arrastrando la carpeta o conectando este
-repositorio de GitHub — no requiere build ni configuración especial.
+Para producción (hasta la Fase 3): este mismo sitio (`index.html`, `admin/`, `assets/`)
+se podía publicar tal cual en Netlify o Vercel arrastrando la carpeta — no requería build
+ni configuración especial. **Desde la Fase 4 esto cambió:** el botón de compra necesita
+las funciones serverless de `api/`, así que hay que conectar el repositorio de GitHub a
+Vercel (no sirve arrastrar la carpeta) — ver la sección de la Fase 4 más abajo.
 
 ## Fase 3 — Tienda dinámica (`assets/store.js`)
 
@@ -82,5 +85,55 @@ Supabase (misma conexión que el panel, vía `assets/supabase-config.js`):
 No requiere configuración adicional: en cuanto un producto se marca `disponible` en el
 panel admin, aparece en la tienda pública (recargando la página).
 
-**Pendiente para Fase 4:** el botón "Reservar" sigue derivando a WhatsApp — falta el
-botón de pago con Mercado Pago.
+## Fase 4 — Mercado Pago (`api/`)
+
+Cada tarjeta del catálogo tiene dos botones: "Reservar" (WhatsApp, como antes) y
+**"Comprar"**, que paga directo con Mercado Pago (tarjetas, transferencia, etc.) sin
+salir del flujo de compra.
+
+Cómo funciona (Checkout Pro, la modalidad más simple de Mercado Pago: el pago se hace
+en una página de Mercado Pago, no hay que tocar datos de tarjetas en este sitio):
+
+1. El botón "Comprar" llama a `api/create-preference.js`, que crea un pedido
+   (`pendiente`) en la tabla `orders` y una "preferencia de pago" en Mercado Pago, y
+   redirige al comprador a esa página de pago.
+2. Cuando el comprador paga, Mercado Pago le muestra el resultado y lo devuelve al
+   sitio (`?pago=exito|pendiente|error`, con un aviso en pantalla) y **además** llama a
+   `api/mercadopago-webhook.js` por su cuenta (esto pasa aunque el comprador cierre la
+   pestaña sin volver al sitio).
+3. El webhook le vuelve a preguntar a Mercado Pago (con el Access Token privado) cuál es
+   el estado real del pago — nunca confía en los datos que vienen en la notificación — y
+   actualiza el pedido en `orders` (`pendiente` / `aprobado` / `rechazado`).
+4. El pedido aprobado aparece en la sección **"Pedidos"** del panel admin. Isabel revisa
+   ahí los pagos confirmados y marca el producto como **vendido manualmente** en la lista
+   de productos (con el botón que ya existía) — así se evita vender el mismo producto dos
+   veces si dos personas pagan casi al mismo tiempo.
+
+### Cómo activarlo
+
+1. **Base de datos:** ejecutar `supabase/migrations/0003_orders.sql` en el SQL Editor de
+   Supabase (crea la tabla `orders`).
+2. **Cuenta de Mercado Pago:** crear una cuenta de vendedor en
+   [mercadopago.cl](https://www.mercadopago.cl) y, en
+   [tus integraciones](https://www.mercadopago.cl/developers/panel/app), obtener:
+   - **Credenciales de prueba** para probar todo el flujo con tarjetas de test antes de
+     cobrar de verdad.
+   - **Credenciales de producción** para cuando quede listo para cobrar en serio.
+   En ambos casos, lo que se necesita acá es el **Access Token** (empieza con `TEST-` en
+   modo prueba, o `APP_USR-` en producción). Nunca se sube al repositorio.
+3. **Service role key de Supabase:** en Supabase, Project Settings → API → copiar la
+   **`service_role` key** (distinta de la `anon` key que ya usan el panel y la tienda).
+   Esta clave puede saltarse todas las políticas de RLS, así que solo se usa en las
+   funciones serverless — jamás en código que corra en el navegador.
+4. **Publicar en Vercel:** conectar este repositorio de GitHub como proyecto en
+   [vercel.com](https://vercel.com) (no requiere configuración de build: Vercel detecta
+   solo los archivos estáticos y las funciones de `api/`). En **Project Settings →
+   Environment Variables** agregar:
+   - `MP_ACCESS_TOKEN`: el Access Token de Mercado Pago (paso 2).
+   - `SUPABASE_SERVICE_ROLE_KEY`: la service role key (paso 3).
+5. Probar una compra completa con una
+   [tarjeta de prueba](https://www.mercadopago.cl/developers/es/docs/checkout-pro/additional-content/your-integrations/test/cards)
+   antes de cambiar a las credenciales de producción.
+
+**Pendiente para Fase 5:** las fotos siguen incrustadas en base64 dentro de
+`index.html`, lo que hace la página pesada — falta moverlas a Supabase Storage.
